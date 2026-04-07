@@ -48,23 +48,34 @@ namespace My_personal_budget_web_api.Providers
 
         public async Task<User?> GetUserByUsernameAsync(string login)
         {
+            if (string.IsNullOrWhiteSpace(login))
+            {
+                return null;
+            }
+
             if (IsValidEmail(login))
             {
                 return await _dataBaseContext.Users
                     .Include(u => u.Person)
-                    .FirstOrDefaultAsync(u => u.Email == login);
+                    .FirstOrDefaultAsync(u => u.Email.ToLower() == login.ToLower());
             }
             else
             {
                 return await _dataBaseContext.Users
                     .Include(u => u.Person)
-                    .FirstOrDefaultAsync(u => u.UserName == login);
+                    .FirstOrDefaultAsync(u => u.UserName.ToLower() == login.ToLower());
             }
         }
-
-        public async Task<bool> IsUsernameTakenAsync(string username) // переделать
+        public async Task<bool> IsUsernameTakenAsync(string login)
         {
-            return await _dataBaseContext.Users.AnyAsync(u => u.UserName == username);
+            if (string.IsNullOrWhiteSpace(login))
+            {
+                return false;
+            }
+
+            return await _dataBaseContext.Users.AnyAsync(u =>
+                u.UserName.ToLower() == login.ToLower() ||
+                u.Email.ToLower() == login.ToLower());
         }
         private bool IsValidEmail(string email)
         {

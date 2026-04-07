@@ -42,12 +42,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Products API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "MyPersonalBudget API", Version = "v1" });
 });
 
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowLocalhost", builder => {
-        builder.WithOrigins("http://localhost:7141")
+        builder.WithOrigins("https://localhost:7017")
                .AllowAnyHeader()
                .AllowAnyMethod()
                .AllowCredentials();

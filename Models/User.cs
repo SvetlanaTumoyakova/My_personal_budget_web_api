@@ -20,7 +20,7 @@ namespace My_personal_budget_web_api.Models
 
         [Required]
         [MinLength(6)]
-        public required string PasswordHash { get; set; }
+        public string PasswordHash { get; set; }
 
         [Column("person_id")]
         public Guid PersonID { get; set; }
