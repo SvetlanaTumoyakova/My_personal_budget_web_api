@@ -46,7 +46,7 @@ namespace My_personal_budget_web_api.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return Conflict(new { message = ex.Message });
+                return StatusCode(400, new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -62,13 +62,13 @@ namespace My_personal_budget_web_api.Controllers
 
             try
             {
-                var user = await _authProvider.GetUserByUsernameAsync(dto.Login);
+                var user = await _authProvider.GetUserByLoginAsync(dto.Login);
                 if (user == null)
-                    return Unauthorized(new { message = "Invalid username or password" });
+                    return Unauthorized(new { message = "Неверный логин или пароль" });
 
                 var passwordValid = _authService.VerifyPassword(dto.Password, user.PasswordHash);
                 if (!passwordValid)
-                    return Unauthorized(new { message = "Invalid username or password" });
+                    return Unauthorized(new { message = "Неверный логин или пароль" });
 
                 var token = _authService.GenerateJwtToken(user);
 

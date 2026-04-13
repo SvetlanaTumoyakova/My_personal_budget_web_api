@@ -23,8 +23,9 @@ namespace My_personal_budget_web_api.Service
             var claims = new[]
             {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.UserName),
-        };
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Email, user.Email),
+            };
 
             var token = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,

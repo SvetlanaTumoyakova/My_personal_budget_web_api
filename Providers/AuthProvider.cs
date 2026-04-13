@@ -19,8 +19,10 @@ namespace My_personal_budget_web_api.Providers
         {
 
             if (await IsUsernameTakenAsync(dto.UserName))
-                throw new InvalidOperationException("Пользователь с таким email уже существует");
+                throw new InvalidOperationException("Пользователь с таким именем уже существует");
 
+            if (await IsEmailTakenAsync(dto.Email))
+                throw new InvalidOperationException("Пользователь с таким email уже существует");
 
             var person = new Person
             {
@@ -46,7 +48,7 @@ namespace My_personal_budget_web_api.Providers
             return user;
         }
 
-        public async Task<User?> GetUserByUsernameAsync(string login)
+        public async Task<User?> GetUserByLoginAsync(string login)
         {
             if (string.IsNullOrWhiteSpace(login))
             {
@@ -66,16 +68,27 @@ namespace My_personal_budget_web_api.Providers
                     .FirstOrDefaultAsync(u => u.UserName.ToLower() == login.ToLower());
             }
         }
-        public async Task<bool> IsUsernameTakenAsync(string login)
+
+        public async Task<bool> IsUsernameTakenAsync(string userName)
         {
-            if (string.IsNullOrWhiteSpace(login))
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 return false;
             }
 
             return await _dataBaseContext.Users.AnyAsync(u =>
-                u.UserName.ToLower() == login.ToLower() ||
-                u.Email.ToLower() == login.ToLower());
+                u.UserName.ToLower() == userName.ToLower());
+        }
+
+        public async Task<bool> IsEmailTakenAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
+            return await _dataBaseContext.Users.AnyAsync(u =>
+                u.Email.ToLower() == email.ToLower());
         }
         private bool IsValidEmail(string email)
         {
