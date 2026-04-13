@@ -23,8 +23,10 @@ namespace My_personal_budget_web_api.Models
         public string PasswordHash { get; set; }
 
         [Column("person_id")]
-        public Guid PersonID { get; set; }
+        public Guid PersonId { get; set; }
 
         public required Person Person { get; set; }
+
+        public ICollection<Account> Accounts { get; set; } = new List<Account>();
     }
 }
