@@ -62,14 +62,17 @@ namespace My_personal_budget_web_api.Controllers
 
             try
             {
+                // проверяем логин
                 var user = await _authProvider.GetUserByLoginAsync(dto.Login);
                 if (user == null)
                     return Unauthorized(new { message = "Неверный логин или пароль" });
 
+                // проверяем пароль
                 var passwordValid = _authService.VerifyPassword(dto.Password, user.PasswordHash);
                 if (!passwordValid)
                     return Unauthorized(new { message = "Неверный логин или пароль" });
 
+                // Генерируем токен
                 var token = _authService.GenerateJwtToken(user);
 
                 return Ok(new

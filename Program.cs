@@ -18,6 +18,8 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthProvider, AuthProvider>();
 
+builder.Services.AddScoped<IAccountProvider, AccountProvider>();
+
 builder.Services.AddDbContext<DataBaseContext>(options => {
     options.UseNpgsql(builder.Configuration.GetConnectionString("TestConnection"));
     options.UseSnakeCaseNamingConvention();

@@ -69,6 +69,11 @@ namespace My_personal_budget_web_api.Providers
             }
         }
 
+        /// <summary>
+        /// Проверяет, занят ли указанное имя пользователя в системе.
+        /// </summary>
+        /// <param name="userName">Имя пользователя для проверки.</param>
+        /// <returns><c>true</c>, если имя пользователя уже зарегистрированно; иначе <c>false</c>.</returns>
         public async Task<bool> IsUsernameTakenAsync(string userName)
         {
             if (string.IsNullOrWhiteSpace(userName))
@@ -80,6 +85,11 @@ namespace My_personal_budget_web_api.Providers
                 u.UserName.ToLower() == userName.ToLower());
         }
 
+        /// <summary>
+        /// Проверяет, занят ли указанный email в системе.
+        /// </summary>
+        /// <param name="email">Email пользователя для проверки.</param>
+        /// <returns><c>true</c>, если email уже зарегистрирован; иначе <c>false</c>.</returns>
         public async Task<bool> IsEmailTakenAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
