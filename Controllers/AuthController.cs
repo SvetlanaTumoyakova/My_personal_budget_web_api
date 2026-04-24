@@ -18,6 +18,16 @@ namespace My_personal_budget_web_api.Controllers
             _authService = authService;
         }
 
+        /// <summary>
+        /// Регистрирует нового пользователя и возвращает JWT‑токен.
+        /// </summary>
+        /// <param name="dto">Данные для регистрации (RegisterDto).</param>
+        /// <returns>IActionResult с идентификатором пользователя и JWT‑токеном при успешном выполнении.</returns>
+        /// <remarks>
+        /// Возможные ошибки:
+        /// - 400 Bad Request: некорректные данные в запросе или ошибка бизнес‑логики (например, пользователь уже существует).
+        /// - 500 Internal Server Error: внутренняя ошибка сервера.
+        /// </remarks>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
@@ -54,8 +64,19 @@ namespace My_personal_budget_web_api.Controllers
             }
         }
 
+        /// <summary>
+        /// Выполняет аутентификацию пользователя и возвращает JWT‑токен.
+        /// </summary>
+        /// <param name="loginDto">Данные для входа (LoginDto).</param>
+        /// <returns>IActionResult с идентификатором пользователя и JWT‑токеном при успешной аутентификации.</returns>
+        /// <remarks>
+        /// Возможные ошибки:
+        /// - 400 Bad Request: некорректные данные в запросе.
+        /// - 401 Unauthorized: неверный логин или пароль.
+        /// - 500 Internal Server Error: внутренняя ошибка сервера.
+        /// </remarks>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -63,12 +84,12 @@ namespace My_personal_budget_web_api.Controllers
             try
             {
                 // проверяем логин
-                var user = await _authProvider.GetUserByLoginAsync(dto.Login);
+                var user = await _authProvider.GetUserByLoginAsync(loginDto.Login);
                 if (user == null)
                     return Unauthorized(new { message = "Неверный логин или пароль" });
 
                 // проверяем пароль
-                var passwordValid = _authService.VerifyPassword(dto.Password, user.PasswordHash);
+                var passwordValid = _authService.VerifyPassword(loginDto.Password, user.PasswordHash);
                 if (!passwordValid)
                     return Unauthorized(new { message = "Неверный логин или пароль" });
 
