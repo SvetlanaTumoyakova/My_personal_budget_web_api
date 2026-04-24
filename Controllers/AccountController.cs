@@ -20,14 +20,23 @@ namespace My_personal_budget_web_api.Controllers
         }
 
         /// <summary>
-        /// Создание нового счёта для текущего пользователя
+        /// Создаёт новый счёт для текущего пользователя на основе переданных данных.
         /// </summary>
+        /// <param name="createAccountDto">Данные для создания счёта (CreateAccountDto).</param>
+        /// <returns>IActionResult с данными созданного счёта (AccountDto) при успешном выполнении.</returns>
+        /// <remarks>
+        /// Возможные ошибки:
+        /// - 400 Bad Request: некорректные данные в запросе или недопустимый идентификатор пользователя.
+        /// - 401 Unauthorized: пользователь не авторизован.
+        /// - 500 Internal Server Error: внутренняя ошибка сервера.
+        /// </remarks>
         [HttpPost]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto createAccountDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Получаем ID пользователя из токена
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
@@ -66,9 +75,17 @@ namespace My_personal_budget_web_api.Controllers
         }
 
         /// <summary>
-        ///Получение одного аккаунта по его id
+        /// Получает информацию об аккаунте по его идентификатору (ID).
         /// </summary>
-        /// 
+        /// <param name="id">Идентификатор аккаунта (GUID).</param>
+        /// <returns>IActionResult с данными аккаунта в формате AccountDto.</returns>
+        /// <remarks>
+        /// Возможные коды ошибок:
+        /// - 200 OK: аккаунт найден и возвращены его данные.
+        /// - 401 Unauthorized: пользователь не авторизован или не имеет прав.
+        /// - 404 Not Found: аккаунт с указанным ID не найден или удалён.
+        /// - 500 Internal Server Error: произошла внутренняя ошибка сервера.
+        /// </remarks>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAccount(Guid id)
         {
@@ -107,8 +124,15 @@ namespace My_personal_budget_web_api.Controllers
         }
 
         /// <summary>
-        ///Получение списка всех активных аккаунтов пользователя
+        /// Получает список аккаунтов текущего авторизованного пользователя в формате AccountDto, включая идентификатор, название, тип, баланс и дату создания.
         /// </summary>
+        /// <returns>IActionResult с коллекцией AccountDto при успешном выполнении.</returns>
+        /// <remarks>
+        /// Возможные коды ошибок:
+        /// - 401 Unauthorized: пользователь не авторизован.
+        /// - 500 Internal Server Error: произошла внутренняя ошибка сервера.
+        /// </remarks>
+
         [HttpGet]
         public async Task<IActionResult> GetAccounts()
         {
@@ -136,5 +160,48 @@ namespace My_personal_budget_web_api.Controllers
                 return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера" });
             }
         }
+
+        /// <summary>
+        /// Логически удаляет аккаунт по указанному ID. Проверяет авторизацию пользователя и право на выполнение операции. При успешном удалении возвращает подтверждение, при ошибке — соответствующий статус.
+        /// </summary>
+        /// <param name="id">Идентификатор аккаунта (GUID).</param>
+        /// <returns>IActionResult с результатом операции.</returns>
+        /// <remarks>
+        /// Возможные коды ошибок:
+        /// - 401 Unauthorized: пользователь не авторизован или не имеет прав.
+        /// - 404 Not Found: аккаунт не найден.
+        /// - 409 Conflict: аккаунт уже удалён.
+        /// - 500 Internal Server Error: внутренняя ошибка сервера.
+        /// </remarks>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAccount(Guid id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                return Unauthorized(new { message = "Пользователь не авторизован" });
+            }
+
+            try
+            {
+                var deleteResult = await _accountProvider.LogicalDeleteAccountAsync(id, userId);
+
+                if (deleteResult == false)
+                {
+                    return NotFound(new { message = "Счёт не найден или уже удалён" });
+                }
+
+                return Ok(new
+                {
+                    message = "Счёт успешно удалён",
+                    accountId = id
+                });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера" });
+            }
+        }
+
     }
 }
