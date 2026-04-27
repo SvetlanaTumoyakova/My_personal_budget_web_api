@@ -34,7 +34,9 @@ namespace My_personal_budget_web_api.Controllers
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto createAccountDto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             // Получаем ID пользователя из токена
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -138,7 +140,9 @@ namespace My_personal_budget_web_api.Controllers
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
                 return Unauthorized(new { message = "Пользователь не авторизован" });
+            }
 
             try
             {
@@ -154,6 +158,43 @@ namespace My_personal_budget_web_api.Controllers
                 }).ToList();
 
                 return Ok(accountsDto);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера" });
+            }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateAccountName(Guid id, [FromBody] UpdateAccountNameDto updateAccountNameDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                return Unauthorized(new { message = "Пользователь не авторизован" });
+            }
+
+            try
+            {
+                var updatedAccount = await _accountProvider.UpdateAccountNameAsync(id, userId, updateAccountNameDto.Name);
+
+                if (updatedAccount == null)
+                {
+                    return NotFound(new { message = "Счёт не найден или удалён" });
+                }
+
+                return Ok(new
+                {
+                    message = "Имя счёта успешно обновлено",
+                    accountId = id,
+                    newName = updateAccountNameDto.Name,
+                    updatedAt = DateTime.UtcNow
+                });
             }
             catch (Exception)
             {

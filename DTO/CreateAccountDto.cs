@@ -5,7 +5,7 @@ namespace My_personal_budget_web_api.DTO
 {
     public class CreateAccountDto
     {
-        [Required, MaxLength(100)]
+        [Required, MinLength(1), MaxLength(100)]
         public string Name { get; set; } = string.Empty;
 
         [Required]

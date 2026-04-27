@@ -2,12 +2,9 @@
 
 namespace My_personal_budget_web_api.DTO
 {
-    public class LoginDto
+    public class UpdateAccountNameDto
     {
         [Required, MinLength(1), MaxLength(100)]
-        public string Login { get; set; }
-
-        [Required, MinLength(6)]
-        public string Password { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

@@ -87,5 +87,35 @@ namespace My_personal_budget_web_api.Providers
                 .ToListAsync();
             return accounts;
         }
+
+        public async Task<Account> UpdateAccountNameAsync(Guid accountId, Guid userId, string newName)
+        {
+            var account = await _dataBaseContext.Accounts
+                .FirstOrDefaultAsync(a => a.Id == accountId && a.UserId == userId && !a.IsDeleted);
+
+            if (account == null)
+            {
+                return null;
+            }
+
+            account.Name = newName;
+            await _dataBaseContext.SaveChangesAsync();
+            return account;
+        }
+
+        public async Task<bool> LogicalDeleteAccountAsync(Guid accountId, Guid userId)
+        {
+            var account = await _dataBaseContext.Accounts
+                .FirstOrDefaultAsync(a => a.Id == accountId && a.UserId == userId && !a.IsDeleted);
+
+            if (account == null)
+            {
+                return false;
+            }
+
+            account.IsDeleted = true;
+            await _dataBaseContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

@@ -8,5 +8,7 @@ namespace My_personal_budget_web_api.Providers.Interface
         Task<Account> CreateAccountAsync(Guid userId, CreateAccountDto createAccountDto);
         Task<Account> GetAccountByIdAsync(Guid accountId, Guid userId);
         Task<List<Account>> GetAccountsAsync(Guid userId);
+        Task<Account> UpdateAccountNameAsync(Guid accountId, Guid userId, string newName);
+        Task<bool> LogicalDeleteAccountAsync(Guid accountId, Guid userId);
     }
 }
