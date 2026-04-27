@@ -19,6 +19,7 @@ namespace My_personal_budget_web_api.Models
         public decimal Balance { get; set; } = 0.00m; // Баланс
 
         public bool IsDefault { get; set; } = false; // счёт по умолчанию (может быть только 1)
+        public bool IsSavings { get; set; } = false; // используется ли счёт как накопительный?
         public bool IsDeleted { get; set; } = false; // Логическое удаление
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -26,5 +27,7 @@ namespace My_personal_budget_web_api.Models
 
         public Guid UserId { get; set; }
         public User? User { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
 }
