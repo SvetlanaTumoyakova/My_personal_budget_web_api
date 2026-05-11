@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using My_personal_budget_web_api.DTO;
+using My_personal_budget_web_api.DTO.AccountDto;
 using My_personal_budget_web_api.Models;
 using My_personal_budget_web_api.Providers.Interface;
 using System.Security.Claims;
