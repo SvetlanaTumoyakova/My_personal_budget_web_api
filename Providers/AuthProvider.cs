@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using My_personal_budget_web_api.Context;
-using My_personal_budget_web_api.DTO;
+using My_personal_budget_web_api.DTO.AuthDto;
 using My_personal_budget_web_api.Models;
 using My_personal_budget_web_api.Providers.Interface;
 

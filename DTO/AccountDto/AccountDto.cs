@@ -1,7 +1,6 @@
-﻿using My_personal_budget_web_api.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace My_personal_budget_web_api.DTO
+namespace My_personal_budget_web_api.DTO.AccountDto
 {
     public class AccountDto
     {
@@ -17,7 +16,6 @@ namespace My_personal_budget_web_api.DTO
         public string AccountTypeName { get; set; } = string.Empty;
 
         public decimal Balance { get; set; } = 0.00m;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
+        public DateTime CreatedAt { get; set; }
     }
 }

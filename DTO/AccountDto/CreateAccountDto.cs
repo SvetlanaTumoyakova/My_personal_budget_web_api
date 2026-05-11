@@ -1,7 +1,6 @@
-﻿using My_personal_budget_web_api.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace My_personal_budget_web_api.DTO
+namespace My_personal_budget_web_api.DTO.AccountDto
 {
     public class CreateAccountDto
     {

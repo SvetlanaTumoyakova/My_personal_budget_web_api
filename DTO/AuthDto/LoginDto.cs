@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace My_personal_budget_web_api.DTO
+namespace My_personal_budget_web_api.DTO.AuthDto
 {
     public class LoginDto
     {
