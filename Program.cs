@@ -48,18 +48,20 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "MyPersonalBudget API", Version = "v1" });
 });
 
-//builder.Services.AddCors(options => {
-//    options.AddPolicy("AllowLocalhost", builder => {
-//        builder.WithOrigins("https://localhost:7017")
-//               .AllowAnyHeader()
-//               .AllowAnyMethod()
-//               .AllowCredentials();
-//    });
-//});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", builder =>
+    {
+        builder.WithOrigins("http://localhost:5173")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
-//app.UseCors("AllowLocalhost");
+app.UseCors("AllowLocalhost");
 
 app.UseHttpsRedirection();
 

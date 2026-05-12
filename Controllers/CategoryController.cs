@@ -266,7 +266,7 @@ namespace My_personal_budget_web_api.Controllers
 
                 if (!result)
                 {
-                    return NotFound(new { message = "Категория не найдена или уже удалена" });
+                    return NotFound(new { message = "Произошла ошибка при удалении категории" });
                 }
 
                 return Ok(new
