@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using My_personal_budget_web_api.DTO.AuthDto;
 using My_personal_budget_web_api.Providers.Interface;
 using My_personal_budget_web_api.Service.Interface;
+using System.Security.Claims;
 
 namespace My_personal_budget_web_api.Controllers
 {
@@ -105,6 +107,56 @@ namespace My_personal_budget_web_api.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Ошибка при входе", error = ex.Message });
+            }
+        }
+
+
+        /// <summary>
+        /// Получает данные пользователя по его идентификатору.
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя (Guid).</param>
+        /// <returns>IActionResult с данными пользователя (ID, имя пользователя, имя, фамилия, email) при успешном запросе.</returns>
+        /// <remarks>
+        /// Возможные ошибки:
+        /// - 404 Not Found: пользователь с указанным идентификатором не найден.
+        /// - 500 Internal Server Error: внутренняя ошибка сервера при выполнении запроса.
+        /// </remarks>
+        /// 
+        [Authorize]
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUser()
+        {
+            try
+            {
+                // Получаем ID пользователя из токена
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { message = "Пользователь не авторизован!" });
+                }
+
+                if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
+                {
+                    return BadRequest(new { message = "Недопустимый идентификатор пользователя" });
+                }
+
+                var user = await _authProvider.GetUserByIdAsync(userId);
+                if (user == null)
+                    return NotFound(new { message = "Пользователь не найден" });
+
+                return Ok(new
+                {
+                    userId = user.Id,
+                    userName = user.UserName,
+                    email = user.Email,
+                    firstName = user.Person.FirstName,
+                    lastName = user.Person.LastName,
+                    patronymic = user.Person?.Patronymic
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ошибка при получении пользователя", error = ex.Message });
             }
         }
     }

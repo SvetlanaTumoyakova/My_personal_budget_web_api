@@ -69,6 +69,13 @@ namespace My_personal_budget_web_api.Providers
             }
         }
 
+        public async Task<User?> GetUserByIdAsync(Guid userId)
+        {
+            return await _dataBaseContext.Users
+                .Include(u => u.Person)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
         /// <summary>
         /// Проверяет, занят ли указанное имя пользователя в системе.
         /// </summary>

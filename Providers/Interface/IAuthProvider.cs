@@ -7,6 +7,7 @@ namespace My_personal_budget_web_api.Providers.Interface
     {
         Task<User> RegisterUserAsync(RegisterDto dto);
         Task<User?> GetUserByLoginAsync(string login);
+        Task<User?> GetUserByIdAsync(Guid userId);
         Task<bool> IsUsernameTakenAsync(string userName);
         Task<bool> IsEmailTakenAsync(string email);
     }
